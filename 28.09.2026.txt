@@ -1,0 +1,160 @@
+Python Variables, Objects, and Memory
+=====================================
+
+1. What is a variable?
+
+A Python variable is a name bound to an object. It is not a box that
+permanently contains a value.
+
+	x = 10
+
+This binds the name x to the integer object 10. You can inspect its value,
+type, and identity:
+
+	print(x)        # value: 10
+	print(type(x))  # type: <class 'int'>
+	print(id(x))    # identity during this object's lifetime
+
+The value returned by id() is an identity value. In CPython it is often
+related to an object's memory address, but Python code should not rely on
+that detail.
+
+2. Are values in Python objects?
+
+Python data values are objects. Examples include integers, strings, lists,
+dictionaries, functions, and classes. A name such as x is not the object; it
+is a way to refer to one.
+
+	x = 10
+	x = 20
+
+The integer 10 was not changed. The name x was rebound to the integer object
+20.
+
+3. Built-in data types
+
+	Numeric:   int, float, complex
+	Boolean:   bool (True and False)
+	Text:      str
+	Sequences: list, tuple, range
+	Sets:      set, frozenset
+	Mapping:   dict
+	Binary:    bytes, bytearray, memoryview
+	Null-like: None (whose type is NoneType)
+
+Examples:
+
+	count = 25
+	price = 99.50
+	z = 3 + 4j
+	is_active = True
+	name = "Sunita"
+	numbers = [10, 20, 30]
+	point = (10, 20)
+	student = {"id": 101, "name": "Sunita", "marks": 85}
+	result = None
+
+An empty set is written set(). The expression {} creates an empty
+dictionary. Dictionary entries use a colon between each key and value.
+
+None, 0, False, "", and [] are different values with different meanings.
+For example, bool(0), bool(""), and bool([]) are False, but they are not
+the same object or value as None.
+
+4. Common collection properties
+
+	list:  ordered, mutable, permits duplicate values
+	tuple: ordered, immutable as a container, permits duplicate values
+	set:   mutable collection of unique values; not position-indexed
+	dict:  stores key-value pairs
+
+5. Mutable and immutable objects
+
+An immutable object cannot be changed after it is created. Common examples
+are int, float, bool, str, and frozenset. A tuple is immutable as a
+container, though it can contain a mutable object.
+
+Mutable objects can be changed in place. Common examples are list, dict,
+set, and bytearray.
+
+	a = [10, 20]
+	b = a
+	b.append(30)
+	print(a)  # [10, 20, 30]
+
+Both names refer to the same list object, so appending through b changes the
+list that a refers to as well.
+
+With an immutable integer, assignment instead rebinds a name:
+
+	a = 10
+	b = a
+	a = 20
+	print(a)  # 20
+	print(b)  # 10
+
+The name a now refers to 20; b still refers to 10. The integer object 10 was
+not modified.
+
+6. Equality versus identity
+
+The == operator compares values. The is operator checks whether two names
+refer to the same object.
+
+	a = [1, 2]
+	b = [1, 2]
+	print(a == b)  # True: same contents
+	print(a is b)  # False: separate list objects
+
+Use is most commonly to check for None:
+
+	if result is None:
+		print("No result")
+
+7. Memory management and garbage collection
+
+Python manages object memory automatically. In CPython, reference counting
+tracks references to objects. Its cyclic garbage collector can detect
+unreachable reference cycles that reference counting alone cannot reclaim.
+Other Python implementations may manage memory differently.
+
+	a = [1, 2, 3]
+	b = a
+
+Both names refer to the same list. Deleting one name removes that reference,
+not necessarily the object:
+
+	del a
+	print(b)  # [1, 2, 3]
+
+The list remains reachable through b.
+
+An object with no remaining references may become eligible for reclamation.
+Python does not promise exactly when that happens, or when its memory is
+returned to the operating system.
+
+8. Why doesn't del numbers necessarily destroy the object immediately?
+
+	numbers = [1, 2, 3]
+	b = numbers
+	del numbers
+
+The statement del numbers removes the name numbers. The list still exists
+because b refers to it. If b is also deleted and no other references remain,
+the object may be reclaimed, but the exact timing is implementation-dependent.
+
+9. Reference cycles
+
+A list can refer to itself:
+
+	a = []
+	a.append(a)
+
+This creates a reference cycle. In CPython, the cyclic garbage collector can
+detect and reclaim cycles when they are unreachable.
+
+Key idea:
+
+	names refer to objects; objects have identity, type, and value;
+	mutable objects can change in place; del removes a name/reference;
+	unreachable objects become eligible for memory reclamation.
